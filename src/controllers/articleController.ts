@@ -1,7 +1,8 @@
 import express, {Request, Response} from 'express';
-import ArticleVector from '@/schemas/ArticleVectorSchema';
 import {Document, VectorStoreIndex, storageContextFromDefaults} from 'llamaindex';
 import vectorSearchService from '@/services/vectorSearchService';
+import ArticleVector from '@/models/ArticleVector';
+import Article from '@/models/Article';
 
 const articleController = express.Router();
 
@@ -9,7 +10,7 @@ const createArticle = async (req: Request, res: Response) => {
   try {
     const data = req.body;
 
-    const articleVector = new ArticleVector(data);
+    const articleVector = new Article(data);
 
     await articleVector.save();
 
