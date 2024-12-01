@@ -11,7 +11,6 @@ const createArticle = async (req: Request, res: Response) => {
     const data = req.body;
 
     const article = new Article(data);
-
     await article.save();
 
     const document = new Document({
@@ -26,7 +25,7 @@ const createArticle = async (req: Request, res: Response) => {
     const storageContext = await storageContextFromDefaults({vectorStore: searchInstance});
     await VectorStoreIndex.fromDocuments([document], {storageContext});
 
-    res.status(200).send('Articles created and indexed successfully');
+    res.status(200).send('Article created and indexed successfully');
   } catch (error) {
     console.error('Error creating article:', error);
     res.status(500).send('Internal Server Error');
