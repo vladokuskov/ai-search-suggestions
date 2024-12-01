@@ -1,0 +1,42 @@
+{
+  "name": "ai-search-suggestions",
+  "version": "0.0.1",
+  "description": "Application to generate AI suggestions in addition to regular search results",
+  "author": "Vladylsav Okuskov <vladokuskov@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false src/index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "llamaindex": "^0.3.4",
+    "mongodb": "6.5.0",
+    "mongoose": "^8.8.3",
+    "openai": "^4.73.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^22.10.1",
+    "prettier": "^3.4.1",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "tsup": {
+    "entry": [
+      "src"
+    ],
+    "splitting": false,
+    "sourcemap": true,
+    "clean": true
+  }
+}
