@@ -10,13 +10,13 @@ const createArticle = async (req: Request, res: Response) => {
   try {
     const data = req.body;
 
-    const articleVector = new Article(data);
+    const article = new Article(data);
 
-    await articleVector.save();
+    await article.save();
 
     const document = new Document({
-      text: articleVector.title,
-      metadata: JSON.parse(JSON.stringify(articleVector)),
+      text: article.title,
+      metadata: JSON.parse(JSON.stringify(article)),
     });
 
     const searchInstance = await vectorSearchService.getVectorSearchInstance(
