@@ -5,7 +5,7 @@ export interface IArticle extends Document {
   id: string;
   title: string;
   textTabs: TextTab[];
-  embeddings?: any;
+  embeddings?: number[];
 }
 
 const article = new Schema<IArticle>({
@@ -18,7 +18,7 @@ const article = new Schema<IArticle>({
       text: {type: String, index: true},
     },
   ],
-  embeddings: {type: Array<any>, required: false, index: true},
+  embeddings: {type: Array<number>, required: false, index: true},
 });
 
 const Article = mongoose.model('articles', article);
