@@ -8,7 +8,7 @@ class DatabaseService {
 
   constructor() {
     this.connection = null;
-    this.dbName = 'articles_db';
+    this.dbName = 'ai_search_suggestions_db';
   }
 
   async connect() {
@@ -18,6 +18,8 @@ class DatabaseService {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
+
+      // await this.createIndexes(); // TODO: Handle case when indexes exist
       console.log('Connected to MongoDB via Mongoose');
     } catch (error) {
       console.error('Error connecting to MongoDB:', error);

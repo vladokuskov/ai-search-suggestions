@@ -1,8 +1,7 @@
 import express, {Request, Response} from 'express';
-import {Document, VectorStoreIndex, storageContextFromDefaults} from 'llamaindex';
-import vectorSearchService from '@/services/vectorSearchService';
-import ArticleVector from '@/models/ArticleVector';
 import Article from '@/models/Article';
+import aiService from '@/services/aiService';
+import {TextTab} from '@/types/TextTab';
 
 const articleController = express.Router();
 
@@ -10,21 +9,17 @@ const createArticle = async (req: Request, res: Response) => {
   try {
     const data = req.body;
 
-    const article = new Article(data);
-    await article.save();
+    const textTabs = req.body.textTabs as TextTab[];
+    const content = textTabs.map((textTab: TextTab) => textTab.text);
 
-    const document = new Document({
-      text: article.title,
-      metadata: JSON.parse(JSON.stringify(article)),
+    const embeddings = await aiService.getEmbeddings(content.join('') || '');
+
+    const article = new Article({
+      ...data,
+      embeddings,
     });
 
-    const searchInstance = await vectorSearchService.getVectorSearchInstance(
-      ArticleVector.collection.name,
-      `${ArticleVector.collection.name}_index`,
-    );
-    const storageContext = await storageContextFromDefaults({vectorStore: searchInstance});
-    await VectorStoreIndex.fromDocuments([document], {storageContext});
-
+    await article.save();
     res.status(200).send('Article created and indexed successfully');
   } catch (error) {
     console.error('Error creating article:', error);

@@ -1,13 +1,24 @@
 import mongoose, {Document, Schema} from 'mongoose';
+import {TextTab} from '@/types/TextTab';
 
 export interface IArticle extends Document {
+  id: string;
   title: string;
-  content: string;
+  textTabs: TextTab[];
+  embeddings?: any;
 }
 
 const article = new Schema<IArticle>({
+  id: {type: String, required: true},
   title: {type: String, required: true},
-  content: {type: String, required: true},
+  textTabs: [
+    {
+      id: {type: String, index: false, unique: false},
+      title: {type: String, index: false},
+      text: {type: String, index: true},
+    },
+  ],
+  embeddings: {type: Array<any>, required: false, index: true},
 });
 
 const Article = mongoose.model('articles', article);
