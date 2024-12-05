@@ -47,8 +47,8 @@ class AiService {
           role: 'system',
           content: `
            1. You a search assistant.
-           2. Formulate up to three questions or answers about the given text based on [user query] and provide the context that you used. Ensure all results are distinct.
-           3. Title should have the question or answer to [user query]
+           2. Formulate up to three questions or answers about the given text based on [query] and provide the context that you used. Ensure all results are distinct.
+           3. Title should have the question or answer to [query]
            4. Your response should be in json format.`,
         },
         {
@@ -57,7 +57,7 @@ class AiService {
         },
         {
           role: 'user',
-          content: `My user query: ${query}`,
+          content: `My query: ${query}`,
         },
       ],
 
