@@ -2,7 +2,7 @@ import openAiService from '@/services/openAiService';
 import Article from '@/models/Article';
 
 class AiService {
-  async articleSearchSuggestions(query: string) {
+  async articleSearch(query: string) {
     const queryEmbeddings = await aiService.getEmbeddings(query);
 
     const pipeline: any[] = [

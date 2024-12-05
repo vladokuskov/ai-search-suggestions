@@ -11,7 +11,7 @@ const getAiSearchSuggestions = async (req: Request, res: Response) => {
     return;
   }
 
-  const responseText = await aiService.articleSearchSuggestions(query);
+  const responseText = await aiService.articleSearch(query);
 
   if (!responseText) {
     res.status(422).send({error: 'No results found for query'});
