@@ -46,11 +46,14 @@ class AiService {
         {
           role: 'system',
           content: `
-           You a search assistant.
-           Formulate up to three questions or answers about the given text based on [user query] and provide the context that you used. Ensure all results are distinct.
-           Title should have the question or answer to [user query]
-           Your response should be in json format.
-           Your current knowledge base: [${JSON.stringify(arrayOfText)}].`,
+           1. You a search assistant.
+           2. Formulate up to three questions or answers about the given text based on [user query] and provide the context that you used. Ensure all results are distinct.
+           3. Title should have the question or answer to [user query]
+           4. Your response should be in json format.`,
+        },
+        {
+          role: 'assistant',
+          content: `Your current knowledge base: [${JSON.stringify(arrayOfText)}].`,
         },
         {
           role: 'user',
