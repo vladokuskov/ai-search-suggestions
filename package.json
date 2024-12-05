@@ -17,7 +17,6 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "llamaindex": "^0.3.4",
     "mongodb": "6.5.0",
     "mongoose": "^8.8.3",
     "openai": "^4.73.1"
