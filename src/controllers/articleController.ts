@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express';
 import Article from '@/models/Article';
-import aiService from '@/services/aiService';
 import {TextTab} from '@/types/TextTab';
+import aiService from '@/services/aiService';
 
 const articleController = express.Router();
 
@@ -20,6 +20,7 @@ const createArticle = async (req: Request, res: Response) => {
     });
 
     await article.save();
+
     res.status(200).send('Article created and indexed successfully');
   } catch (error) {
     console.error('Error creating article:', error);

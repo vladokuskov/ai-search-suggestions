@@ -13,12 +13,11 @@ const article = new Schema<IArticle>({
   title: {type: String, required: true},
   textTabs: [
     {
-      id: {type: String, index: false, unique: false},
-      title: {type: String, index: false},
-      text: {type: String, index: true},
+      id: {type: String, unique: false},
+      title: {type: String},
+      text: {type: String},
     },
   ],
-  embeddings: {type: Array<number>, required: false, index: true},
 });
 
 const Article = mongoose.model('articles', article);

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import process from 'process';
-import {MongoDBAtlasVectorSearch} from 'llamaindex';
+import Article from '@/models/Article';
 
 class DatabaseService {
   connection = null;
@@ -19,7 +19,8 @@ class DatabaseService {
         useUnifiedTopology: true,
       });
 
-      // await this.createIndexes(); // TODO: Handle case when indexes exist
+      await this.setupIndexes();
+
       console.log('Connected to MongoDB via Mongoose');
     } catch (error) {
       console.error('Error connecting to MongoDB:', error);
@@ -27,22 +28,44 @@ class DatabaseService {
     }
   }
 
-  public articlesVectorSearch() {
-    const client = mongoose.connection.getClient();
-    return new MongoDBAtlasVectorSearch({
-      mongodbClient: client,
-      dbName: this.dbName,
-      indexName: 'articles_vectors_index',
-      collectionName: 'articles_vectors',
-    });
+  async createSearchIndexes(collectionName, indexes) {
+    try {
+      const collection = mongoose.connection.collection(collectionName);
+
+      const existingIndexes = await collection.listSearchIndexes().toArray();
+
+      for (const index of indexes) {
+        const indexExists = existingIndexes.some((idx) => idx.name === index.name);
+
+        if (!indexExists) {
+          await collection.createSearchIndex(index);
+          console.log(`Index '${index.name}' created for collection '${collectionName}'.`);
+        } else {
+          console.log(`Index '${index.name}' already exists in collection '${collectionName}'.`);
+        }
+      }
+    } catch (err) {
+      console.error(`Failed to create search indexes for collection '${collectionName}':`, err.message);
+    }
   }
 
-  getDbName() {
-    return this.dbName;
-  }
-
-  getClient() {
-    return mongoose.connection.getClient();
+  async setupIndexes() {
+    await this.createSearchIndexes(Article.collection.name, [
+      {
+        name: 'article_text',
+        type: 'vectorSearch',
+        definition: {
+          fields: [
+            {
+              type: 'vector',
+              numDimensions: 1536,
+              path: 'embeddings',
+              similarity: 'cosine',
+            },
+          ],
+        },
+      },
+    ]);
   }
 }
 

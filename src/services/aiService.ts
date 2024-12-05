@@ -8,11 +8,11 @@ class AiService {
     const pipeline: any[] = [
       {
         $vectorSearch: {
-          index: 'vector_index',
           queryVector: queryEmbeddings,
           path: 'embeddings',
-          exact: true,
           limit: 3,
+          index: 'article_text',
+          exact: true,
         },
       },
       {
@@ -28,34 +28,67 @@ class AiService {
 
     const result = await Article.aggregate(pipeline);
 
-    const arrayOfQueryDocs = [];
+    const arrayOfText = [];
 
     for await (const doc of result) {
-      arrayOfQueryDocs.push(doc);
+      if (doc.score >= 0.87) {
+        const text = doc.textTabs.map((note) => note.text).join('');
+        arrayOfText.push({text});
+      }
     }
 
-    return arrayOfQueryDocs;
+    if (!arrayOfText.length) return [];
 
-    // const completionResponse = await openAiService.getOpenAi().chat.completions.create({
-    //   model: 'gpt-4o-mini',
-    //   messages: [
-    //     {
-    //       role: 'system',
-    //       content: `Behave like you search assistant for application articles. Provide response only in raw text format, without any markdown formatting. Use commas as separators. You have the knowledge of only the following articles that are relevant to the user right now: [${JSON.stringify(
-    //         contextKnowledge,
-    //       )}].`,
-    //     },
-    //     {
-    //       role: 'user',
-    //       content: 'Generate 3 questions based on articles', // Just an example
-    //     },
-    //   ],
-    // });
+    const completionResponse = await openAiService.getOpenAi().chat.completions.create({
+      model: 'gpt-4o-mini',
+      response_format: {type: 'json_object'},
+      messages: [
+        {
+          role: 'system',
+          content: `You a search assistant. Your task is to generate 3 questions or answers based on article texts and user query in json format. Your current knowledge base: [${JSON.stringify(arrayOfText)}].`,
+        },
+        {
+          role: 'user',
+          content: `My user query: ${query}`,
+        },
+      ],
 
-    // return completionResponse.choices[0].message.content;
+      tools: [
+        {
+          type: 'function',
+          function: {
+            name: 'search_and_context',
+            description:
+              'Formulate three questions or answers about the given text and provide the context that you used',
+            parameters: {
+              type: 'object',
+              properties: {
+                aiSearchResults: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      title: {type: 'string'},
+                      context: {type: 'string'},
+                    },
+                    required: ['title', 'context'],
+                  },
+                },
+              },
+              required: ['aiSearchResults'],
+            },
+          },
+          strict: true,
+        },
+      ],
+
+      tool_choice: {type: 'function', function: {name: 'search_and_context'}},
+    });
+
+    return completionResponse.choices[0].message.tool_calls[0].function.arguments;
   }
 
-  async getEmbeddings(data: string) {
+  async getEmbeddings(data: string, model = 'text-embedding-ada-002') {
     if (!data) {
       throw new Error('Data for embedding cannot be empty');
     }
@@ -63,8 +96,7 @@ class AiService {
     try {
       const ai = openAiService.getOpenAi();
       const embedding = await ai.embeddings.create({
-        model: 'text-embedding-3-small',
-        dimensions: 1024,
+        model,
         input: data,
       });
 
