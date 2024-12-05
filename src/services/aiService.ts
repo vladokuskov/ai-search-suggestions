@@ -37,7 +37,7 @@ class AiService {
       }
     }
 
-    if (!arrayOfText.length) return [];
+    if (!arrayOfText.length) return;
 
     const completionResponse = await openAiService.getOpenAi().chat.completions.create({
       model: 'gpt-4o-mini',
@@ -59,11 +59,11 @@ class AiService {
           function: {
             name: 'search_and_context',
             description:
-              'Formulate three questions or answers about the given text and provide the context that you used',
+              'Formulate if possible three questions or answers about the given text and provide the context that you used. All results should be different.',
             parameters: {
               type: 'object',
               properties: {
-                aiSearchResults: {
+                results: {
                   type: 'array',
                   items: {
                     type: 'object',
@@ -75,7 +75,7 @@ class AiService {
                   },
                 },
               },
-              required: ['aiSearchResults'],
+              required: ['results'],
             },
           },
           strict: true,

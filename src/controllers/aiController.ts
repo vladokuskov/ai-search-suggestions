@@ -13,7 +13,7 @@ const getAiSearchSuggestions = async (req: Request, res: Response) => {
 
   const responseText = await aiService.articleSearchSuggestions(query);
 
-  res.status(200).send({data: responseText});
+  res.status(200).send({data: JSON.parse(responseText || '')});
 };
 
 aiController.get('/search/article/suggestions/:q', getAiSearchSuggestions);
