@@ -18,6 +18,7 @@ const article = new Schema<IArticle>({
       text: {type: String},
     },
   ],
+  embeddings: {type: Array<number>, required: false},
 });
 
 const Article = mongoose.model('articles', article);
