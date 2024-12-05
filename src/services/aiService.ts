@@ -45,7 +45,12 @@ class AiService {
       messages: [
         {
           role: 'system',
-          content: `You a search assistant. Your task is to generate 3 questions or answers based on article texts and user query in json format. Your current knowledge base: [${JSON.stringify(arrayOfText)}].`,
+          content: `
+           You a search assistant.
+           Formulate up to three questions or answers about the given text based on [user query] and provide the context that you used. Ensure all results are distinct.
+           Title should have the question or answer to [user query]
+           Your response should be in json format.
+           Your current knowledge base: [${JSON.stringify(arrayOfText)}].`,
         },
         {
           role: 'user',
@@ -58,8 +63,6 @@ class AiService {
           type: 'function',
           function: {
             name: 'search_and_context',
-            description:
-              'Formulate if possible three questions or answers about the given text and provide the context that you used. All results should be different.',
             parameters: {
               type: 'object',
               properties: {

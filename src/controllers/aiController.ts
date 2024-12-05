@@ -7,13 +7,18 @@ const getAiSearchSuggestions = async (req: Request, res: Response) => {
   const query = req.params.q;
 
   if (!query) {
-    res.status(404).send({error: 'No search query provided.'});
+    res.status(404).send({error: 'No query provided'});
     return;
   }
 
   const responseText = await aiService.articleSearchSuggestions(query);
 
-  res.status(200).send({data: JSON.parse(responseText || '')});
+  if (!responseText) {
+    res.status(422).send({error: 'No results found for query'});
+    return;
+  }
+
+  res.status(200).send({data: JSON.parse(responseText)});
 };
 
 aiController.get('/search/article/suggestions/:q', getAiSearchSuggestions);
