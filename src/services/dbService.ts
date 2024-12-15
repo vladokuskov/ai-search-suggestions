@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import process from 'process';
-import Article from '@/models/Article';
+import ArticleNotesVector from '@/models/ArticleNotesVector';
 
 class DatabaseService {
   connection = null;
@@ -50,16 +50,16 @@ class DatabaseService {
   }
 
   async setupIndexes() {
-    await this.createSearchIndexes(Article.collection.name, [
+    await this.createSearchIndexes(ArticleNotesVector.collection.name, [
       {
-        name: 'article_text',
+        name: 'article_notes_vector',
         type: 'vectorSearch',
         definition: {
           fields: [
             {
               type: 'vector',
               numDimensions: 1536,
-              path: 'embeddings',
+              path: 'vector',
               similarity: 'cosine',
             },
           ],
